@@ -1,0 +1,50 @@
+# Copyright (c) 2025
+# SPDX-License-Identifier: MIT
+
+if BOARD_TIPPER_TF
+
+config BOARD
+	default "Tipper TF"
+
+config ZMK_KEYBOARD_NAME
+	default "Tipper TF"
+
+config HAS_NRFX
+	default y
+
+if USB_DEVICE_STACK
+
+config USB_NRFX
+	default y
+
+endif # USB_DEVICE_STACK
+
+config BT_CTLR
+	default BT
+
+config ZMK_BLE
+	default y
+
+config ZMK_USB
+	default y
+
+config ZMK_BATTERY_VOLTAGE_DIVIDER
+	default y
+
+config RETAINED_MEM
+	default y
+
+config RETENTION
+	default y
+
+config RETENTION_BOOT_MODE
+	default y
+
+# Explicitly set bootloader type for Adafruit nRF52 bootloader
+# This ensures the correct magic value (0x57) is used
+choice ZMK_BOOTMODE_MAGIC_VALUE_BOOTLOADER_TYPE
+	default ZMK_BOOTMODE_MAGIC_VALUE_BOOTLOADER_TYPE_ADAFRUIT_NRF52
+
+endchoice
+
+endif # BOARD_TIPPER_TF

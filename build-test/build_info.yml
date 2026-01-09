@@ -1,0 +1,67 @@
+cmake:
+  application:
+    configuration-dir: /workspaces/ZMK-tf2/zmk/app
+    source-dir: /workspaces/ZMK-tf2/zmk/app
+  board:
+    name: nice_nano
+    path:
+     - /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano
+    qualifiers: nrf52840
+    revision: 2.0.0
+  devicetree:
+    bindings-dirs:
+     - /workspaces/ZMK-tf2/zmk/app/module/dts/bindings
+     - /workspaces/ZMK-tf2/zmk/app/dts/bindings
+     - /workspaces/ZMK-tf2/zephyr/dts/bindings
+    extra-user-files:
+     - /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne.keymap
+    files:
+     - /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano.dts
+     - /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano_2_0_0.overlay
+     - /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne_left.overlay
+     - /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/boards/nice_nano.overlay
+     - /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne.keymap
+    include-dirs:
+     - /workspaces/ZMK-tf2/modules/hal/stm32/dts
+     - /workspaces/ZMK-tf2/modules/hal/atmel/include
+     - /workspaces/ZMK-tf2/modules/hal/gigadevice/include
+     - /workspaces/ZMK-tf2/modules/hal/nuvoton/dts
+     - /workspaces/ZMK-tf2/zmk/app/module/include
+     - /workspaces/ZMK-tf2/zmk/app/module/dts
+     - /workspaces/ZMK-tf2/zmk/app/include
+     - /workspaces/ZMK-tf2/zmk/app/dts/common
+     - /workspaces/ZMK-tf2/zmk/app/dts
+     - /workspaces/ZMK-tf2/zephyr/include
+     - /workspaces/ZMK-tf2/zephyr/include/zephyr
+     - /workspaces/ZMK-tf2/zephyr/dts/common
+     - /workspaces/ZMK-tf2/zephyr/dts/x86
+     - /workspaces/ZMK-tf2/zephyr/dts/xtensa
+     - /workspaces/ZMK-tf2/zephyr/dts/sparc
+     - /workspaces/ZMK-tf2/zephyr/dts/riscv
+     - /workspaces/ZMK-tf2/zephyr/dts/posix
+     - /workspaces/ZMK-tf2/zephyr/dts/nios2
+     - /workspaces/ZMK-tf2/zephyr/dts/arm64
+     - /workspaces/ZMK-tf2/zephyr/dts/arm
+     - /workspaces/ZMK-tf2/zephyr/dts/arc
+     - /workspaces/ZMK-tf2/zephyr/dts
+  kconfig:
+    files:
+     - /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano_2_0_0_defconfig
+     - /workspaces/ZMK-tf2/zmk/app/prj.conf
+     - /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne_left.conf
+    user-files:
+     - /workspaces/ZMK-tf2/zmk/app/prj.conf
+  toolchain:
+    name: zephyr
+    path: /opt/zephyr-sdk-0.16.9
+  vendor-specific:
+    nordic:
+      svdfile: /workspaces/ZMK-tf2/modules/hal/nordic/nrfx/mdk/nrf52840.svd
+  zephyr:
+    version: 4.1.0
+    zephyr-base: /workspaces/ZMK-tf2/zephyr
+version: 0.1.0
+west:
+  command: /usr/local/bin/west build -d build-test -s zmk/app -b nicekeyboards/nice_nano -- -DSHIELD=corne_left
+  topdir: /workspaces/ZMK-tf2
+  version: 1.5.0

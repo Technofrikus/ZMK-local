@@ -1,0 +1,31 @@
+{
+  "name": "ZMK Development (Zephyr 4.1)",
+  "dockerFile": "Dockerfile",
+  "runArgs": ["--security-opt", "label=disable"],
+  "containerEnv": {
+    "WORKSPACE_DIR": "${containerWorkspaceFolder}",
+    "PROMPT_COMMAND": "history -a"
+  },
+  "mounts": [
+    "type=volume,source=zmk-root-user,target=/root",
+    "type=volume,source=zmk-zephyr,target=${containerWorkspaceFolder}/zephyr",
+    "type=volume,source=zmk-zephyr-modules,target=${containerWorkspaceFolder}/modules",
+    "type=volume,source=zmk-zephyr-tools,target=${containerWorkspaceFolder}/tools"
+  ],
+  "extensions": [
+    "ms-vscode.cpptools",
+    "ms-vscode.cmake-tools"
+  ],
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "files.exclude": {
+      "**/.west": true,
+      "**/build": true,
+      "**/zephyr": true,
+      "**/modules": true,
+      "**/tools": true
+    }
+  },
+  "forwardPorts": [3000],
+  "postCreateCommand": "west init -l config && west update"
+}

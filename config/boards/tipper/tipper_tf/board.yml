@@ -1,0 +1,5 @@
+boards:
+  - name: tipper_tf
+    vendor: tipper
+    socs:
+      - name: nrf52840

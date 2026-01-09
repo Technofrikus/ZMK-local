@@ -1,0 +1,13 @@
+identifier: tipper_tf
+name: Tipper TF
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+supported:
+  - adc
+  - usb_device
+  - ble
+  - pwm
+  - watchdog

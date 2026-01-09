@@ -1,0 +1,2 @@
+# Load board Kconfig descriptions.
+osource "/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/Kconfig.nice_nano"

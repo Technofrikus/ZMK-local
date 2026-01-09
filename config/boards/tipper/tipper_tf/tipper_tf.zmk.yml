@@ -1,0 +1,12 @@
+file_format: "1"
+id: tipper_tf
+name: Tipper TF
+type: board
+arch: arm
+outputs:
+  - usb
+  - ble
+url: https://github.com/weteor/tipper-tf
+features:
+  - keys
+  - battery

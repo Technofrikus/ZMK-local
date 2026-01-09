@@ -1,0 +1,26 @@
+# West workspace directories
+/.west
+/bootloader
+/modules
+/tools
+/zephyr
+/build
+/zmk
+
+# Build artifacts
+*.uf2
+*.hex
+*.bin
+*.elf
+
+# OS files
+*.DS_Store
+__pycache__/
+*.pyc
+
+# IDE files
+.vscode/settings.json
+.idea/
+
+# Reference directory (keep structure but ignore if needed)
+# "for reference only/" is intentionally kept
