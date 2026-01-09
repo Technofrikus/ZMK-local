@@ -126,6 +126,7 @@ zephyr_udc0: &usbd {
 	};
 };
 
+/* Display SPI */
 &spi0 {
 	compatible = "nordic,nrf-spim";
 	status = "okay";
@@ -144,6 +145,7 @@ zephyr_udc0: &usbd {
 		dc-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
 		reset-gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
 		busy-gpios = <&gpio1 15 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+		status = "okay";
 	};
 };
 
