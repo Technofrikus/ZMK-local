@@ -1,0 +1,10 @@
+# Copyright (c) 2024 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+config GDEW0154M09
+	bool "GoodDisplay GDEW0154M09 EPD display driver"
+	default y
+	depends on DT_HAS_GOODDISPLAY_GDEW0154M09_ENABLED
+	select SPI
+	help
+	  Enable support for GoodDisplay GDEW0154M09 EPD display.
