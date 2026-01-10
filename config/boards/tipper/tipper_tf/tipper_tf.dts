@@ -20,9 +20,8 @@
 		zephyr,flash = &flash0;
 		zmk,kscan = &kscan0;
 		zmk,physical-layout = &tipper_tf_physical_layout;
-		zephyr,console = &usb_logging_uart;
-		zephyr,shell-uart = &usb_logging_uart;
 		zephyr,display = &display;
+		zmk,studio-rpc-uart = &studio_rpc_usb_uart;
 		/* Boot mode is set by nrf52840_uf2_boot_mode.dtsi */
 	};
 
@@ -99,9 +98,15 @@
 
 zephyr_udc0: &usbd {
 	status = "okay";
-	usb_logging_uart: usb_logging_uart {
+	studio_rpc_usb_uart: studio_rpc_usb_uart {
 		compatible = "zephyr,cdc-acm-uart";
 	};
+	/* USB logging UART (for debugging only):
+	 * usb_logging_uart: usb_logging_uart {
+	 *     compatible = "zephyr,cdc-acm-uart";
+	 * };
+	 * When using USB logging, also set zephyr,console and zephyr,shell-uart in chosen
+	 */
 };
 
 &gpregret1 {
