@@ -20,7 +20,8 @@
 		zephyr,flash = &flash0;
 		zmk,kscan = &kscan0;
 		zmk,physical-layout = &tipper_tf_physical_layout;
-		zmk,studio-rpc-uart = &studio_rpc_usb_uart;
+		zephyr,console = &usb_logging_uart;
+		zephyr,shell-uart = &usb_logging_uart;
 		zephyr,display = &display;
 		/* Boot mode is set by nrf52840_uf2_boot_mode.dtsi */
 	};
@@ -98,7 +99,7 @@
 
 zephyr_udc0: &usbd {
 	status = "okay";
-	studio_rpc_usb_uart: studio_rpc_usb_uart {
+	usb_logging_uart: usb_logging_uart {
 		compatible = "zephyr,cdc-acm-uart";
 	};
 };
@@ -135,8 +136,8 @@ zephyr_udc0: &usbd {
 	pinctrl-names = "default", "sleep";
 	cs-gpios = <&gpio0 4 GPIO_ACTIVE_LOW>;
 
-	display: gdew0154m09@0 {
-		compatible = "gooddisplay,gdew0154m09";
+	display: jd79653@0 {
+		compatible = "gooddisplay,jd79653";
 		label = "DISPLAY";
 		reg = <0>;
 		spi-max-frequency = <4000000>;
@@ -145,6 +146,10 @@ zephyr_udc0: &usbd {
 		dc-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
 		reset-gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
 		busy-gpios = <&gpio1 15 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+		pwr = [03 0a 39 39 06];  // Standard values from working driver
+		tcon = <0x22>;
+		cdi = <0x07>;
+		vcom-dc = <0x00>;
 		status = "okay";
 	};
 };
