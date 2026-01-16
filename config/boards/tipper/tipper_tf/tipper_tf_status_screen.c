@@ -185,7 +185,14 @@ static void update_layer_text() {
         lv_label_set_text(layer_label, label);
     }
 
-    request_full_screen_refresh();
+    // Avoid full-screen refresh on every layer change; it updates frequently.
+    lv_obj_invalidate(layer_label);
+    static uint8_t layer_refresh_counter = 0;
+    layer_refresh_counter++;
+    if (layer_refresh_counter >= 6) {
+        layer_refresh_counter = 0;
+        request_full_screen_refresh();
+    }
 }
 
 // Battery update handler
