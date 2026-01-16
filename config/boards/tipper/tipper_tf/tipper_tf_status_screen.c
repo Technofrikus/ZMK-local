@@ -15,7 +15,10 @@
 #include <zmk/events/usb_conn_state_changed.h>
 #include <zmk/events/endpoint_changed.h>
 #include <zmk/events/ble_active_profile_changed.h>
+#include <zmk/events/layer_state_changed.h>
 #include <zmk/display.h>
+#include <zmk/keymap.h>
+#include <stdio.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/kernel.h>
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
@@ -36,6 +39,15 @@ LV_IMAGE_DECLARE(TBAT80c);
 LV_IMAGE_DECLARE(TBAT100);
 LV_IMAGE_DECLARE(TBAT100c);
 
+// Rotated BT label images (pre-rendered)
+LV_IMAGE_DECLARE(bt_rot_blank);
+LV_IMAGE_DECLARE(bt_rot_bt1);
+LV_IMAGE_DECLARE(bt_rot_bt2);
+LV_IMAGE_DECLARE(bt_rot_bt3);
+LV_IMAGE_DECLARE(bt_rot_bt4);
+LV_IMAGE_DECLARE(bt_rot_bt5);
+LV_IMAGE_DECLARE(bt_rot_usb);
+
 
 // Declare custom font
 extern const lv_font_t Ramsey;
@@ -44,8 +56,9 @@ extern const lv_font_t Ramsey;
 static struct zmk_widget_output_status output_status_widget;
 #endif
 
-// BT label object (simpler than canvas to avoid draw pipeline issues)
-static lv_obj_t *bt_label;
+// BT image object (pre-rotated bitmaps)
+static lv_obj_t *bt_image;
+static lv_obj_t *layer_label;
 static lv_obj_t *bat_image; // Battery image object
 static lv_obj_t *screen_parent;
 
@@ -57,19 +70,32 @@ static void request_full_screen_refresh() {
     lv_obj_invalidate(screen_parent);
 }
 
-// Initialize BT label
-static void init_bt_label() {
-    if (screen_parent == NULL || bt_label != NULL) return;
+// Initialize BT image
+static void init_bt_image() {
+    if (screen_parent == NULL || bt_image != NULL) return;
 
-    bt_label = lv_label_create(screen_parent);
-    if (bt_label != NULL) {
-        lv_label_set_text(bt_label, "");
-        lv_obj_set_style_text_font(bt_label, &Ramsey, 0);
-        // Use white text to remain visible on a dark logo background
-        lv_obj_set_style_text_color(bt_label, lv_color_white(), 0);
-        lv_obj_set_style_bg_opa(bt_label, LV_OPA_TRANSP, 0);
-        lv_obj_align(bt_label, LV_ALIGN_BOTTOM_RIGHT, -50, -5);
-        lv_obj_move_foreground(bt_label);
+    bt_image = lv_image_create(screen_parent);
+    if (bt_image != NULL) {
+        lv_image_set_src(bt_image, &bt_rot_blank);
+        lv_obj_align(bt_image, LV_ALIGN_RIGHT_MID, -2, 20);
+        lv_obj_clear_flag(bt_image, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_move_foreground(bt_image);
+    }
+}
+
+// Initialize layer label
+static void init_layer_label() {
+    if (screen_parent == NULL || layer_label != NULL) return;
+
+    layer_label = lv_label_create(screen_parent);
+    if (layer_label != NULL) {
+        lv_label_set_text(layer_label, "");
+        lv_obj_set_style_text_font(layer_label, &Ramsey, 0);
+        lv_obj_set_style_text_color(layer_label, lv_color_white(), 0);
+        lv_obj_set_style_bg_opa(layer_label, LV_OPA_TRANSP, 0);
+        // Bottom edge
+        lv_obj_align(layer_label, LV_ALIGN_BOTTOM_MID, 30, -4);
+        lv_obj_move_foreground(layer_label);
     }
 }
 
@@ -121,21 +147,42 @@ static void update_battery_image(uint8_t level, bool usb_present) {
 
 // Update BT text on canvas
 static void update_bt_text(struct zmk_endpoint_instance endpoint, bool connected) {
-    if (bt_label == NULL) return;
+    if (bt_image == NULL) return;
 
+    const lv_image_dsc_t *img = &bt_rot_blank;
     if (endpoint.transport == ZMK_TRANSPORT_BLE && connected) {
-        char bt_text[5] = "BT?";
         uint8_t profile = endpoint.ble.profile_index + 1;
-        if (profile > 9) {
-            profile = 9;
+        if (profile > 5) {
+            profile = 5;
         }
-        bt_text[2] = (char)('0' + profile);
-        bt_text[3] = '\0';
-        lv_label_set_text(bt_label, bt_text);
+        switch (profile) {
+            case 1: img = &bt_rot_bt1; break;
+            case 2: img = &bt_rot_bt2; break;
+            case 3: img = &bt_rot_bt3; break;
+            case 4: img = &bt_rot_bt4; break;
+            case 5: img = &bt_rot_bt5; break;
+            default: img = &bt_rot_blank; break;
+        }
     } else if (endpoint.transport == ZMK_TRANSPORT_USB && connected) {
-        lv_label_set_text(bt_label, "USB");
+        img = &bt_rot_usb;
+    }
+
+    lv_image_set_src(bt_image, img);
+    request_full_screen_refresh();
+}
+
+// Update layer text
+static void update_layer_text() {
+    if (layer_label == NULL) return;
+
+    zmk_keymap_layer_index_t index = zmk_keymap_highest_layer_active();
+    const char *label = zmk_keymap_layer_name(zmk_keymap_layer_index_to_id(index));
+    if (label == NULL || strlen(label) == 0) {
+        char text[6] = {};
+        snprintf(text, sizeof(text), "%u", (unsigned int)index);
+        lv_label_set_text(layer_label, text);
     } else {
-        lv_label_set_text(bt_label, "");
+        lv_label_set_text(layer_label, label);
     }
 
     request_full_screen_refresh();
@@ -180,6 +227,14 @@ ZMK_SUBSCRIPTION(endpoint_text, zmk_endpoint_changed);
 ZMK_SUBSCRIPTION(endpoint_text, zmk_ble_active_profile_changed);
 #endif
 
+static int layer_update_handler(const zmk_event_t *eh) {
+    update_layer_text();
+    return 0;
+}
+
+ZMK_LISTENER(layer_text, layer_update_handler);
+ZMK_SUBSCRIPTION(layer_text, zmk_layer_state_changed);
+
 // Delayed initial update
 static void delayed_initial_update_work(struct k_work *work) {
     uint8_t level = zmk_battery_state_of_charge();
@@ -198,6 +253,7 @@ static void delayed_initial_update_work(struct k_work *work) {
         connected = true;
     }
     update_bt_text(endpoint, connected);
+    update_layer_text();
 }
 
 static K_WORK_DELAYABLE_DEFINE(initial_update_work, delayed_initial_update_work);
@@ -228,8 +284,10 @@ lv_obj_t *zmk_display_status_screen() {
     bat_image = lv_image_create(screen);
     lv_obj_align(bat_image, LV_ALIGN_TOP_LEFT, 0, 0);
 
-    // BT label (created last, so it appears on top of everything)
-    init_bt_label();
+    // BT image (created last, so it appears on top of everything)
+    init_bt_image();
+    // Layer label (right edge, rotated)
+    init_layer_label();
 
     // Prime initial values immediately so something is visible even if events are delayed
     {
@@ -250,6 +308,7 @@ lv_obj_t *zmk_display_status_screen() {
             connected = true;
         }
         update_bt_text(endpoint, connected);
+        update_layer_text();
     }
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_OUTPUT_STATUS)

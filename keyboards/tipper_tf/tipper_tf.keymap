@@ -177,7 +177,7 @@
 		};
 
 		num_layer {
-			display-name = "Numbers and F-Keys";
+			display-name = "Numbers";
 			bindings = <
 				&none       &kp F9      &kp F10     &kp F11     &kp F12                 &kp KP_PLUS &kp KP_N7   &kp KP_N8   &kp KP_N9   &kp KP_SLASH 
 				&none       &kp F5      &kp F6      &kp F7      &kp F8                  &kp KP_MINUS &kp KP_N4   &kp KP_N5   &kp KP_N6   &kp KP_DOT
