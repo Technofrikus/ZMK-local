@@ -31,6 +31,55 @@ config ZMK_USB
 config ZMK_BATTERY_VOLTAGE_DIVIDER
 	default y
 
+config ZMK_DISPLAY
+	select LV_USE_CONT
+	select LV_USE_LABEL
+	select LV_USE_IMAGE
+	select LV_FONT_MONTSERRAT_26
+
+choice ZMK_DISPLAY_STATUS_SCREEN
+	default ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+endchoice
+
+if ZMK_DISPLAY
+
+config SPI
+	default y
+
+config JD79653
+	default y
+
+config ZMK_DISPLAY_BLANK_ON_IDLE
+	default n
+
+config HEAP_MEM_POOL_SIZE
+	default 1024
+
+config LV_Z_MEM_POOL_SIZE
+	default 4096
+
+endif # ZMK_DISPLAY
+
+if LVGL
+
+config LV_Z_VDB_SIZE
+	default 100
+
+config LV_DPI_DEF
+	default 184
+
+config LV_Z_BITS_PER_PIXEL
+	default 1
+
+choice LV_COLOR_DEPTH
+	default LV_COLOR_DEPTH_1
+endchoice
+
+endif # LVGL
+
+menuconfig CUSTOM_WIDGET_BATTERY_STATUS
+	bool "custom battery status widget"
+
 config RETAINED_MEM
 	default y
 
