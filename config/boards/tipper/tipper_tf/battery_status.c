@@ -20,18 +20,19 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
-LV_IMAGE_DECLARE(bat_100);
-LV_IMAGE_DECLARE(bat_100_c);
-LV_IMAGE_DECLARE(bat_80);
-LV_IMAGE_DECLARE(bat_80_c);
-LV_IMAGE_DECLARE(bat_60);
-LV_IMAGE_DECLARE(bat_60_c);
-LV_IMAGE_DECLARE(bat_40);
-LV_IMAGE_DECLARE(bat_40_c);
-LV_IMAGE_DECLARE(bat_20);
-LV_IMAGE_DECLARE(bat_20_c);
-LV_IMAGE_DECLARE(bat_00);
-LV_IMAGE_DECLARE(bat_00_c);
+// Using TBAT graphics with text (pre-rotated) - same as status screen
+LV_IMAGE_DECLARE(TBAT100);
+LV_IMAGE_DECLARE(TBAT100c);
+LV_IMAGE_DECLARE(TBAT80);
+LV_IMAGE_DECLARE(TBAT80c);
+LV_IMAGE_DECLARE(TBAT60);
+LV_IMAGE_DECLARE(TBAT60c);
+LV_IMAGE_DECLARE(TBAT40);
+LV_IMAGE_DECLARE(TBAT40c);
+LV_IMAGE_DECLARE(TBAT20);
+LV_IMAGE_DECLARE(TBAT20c);
+LV_IMAGE_DECLARE(TBAT00);
+LV_IMAGE_DECLARE(TBAT00c);
 
 struct battery_status_state {
     uint8_t level;
@@ -45,41 +46,41 @@ static void set_battery_symbol(lv_obj_t *icon, struct battery_status_state state
     uint8_t level = state.level;
 
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
-    if (level > 80) {
+    if (level >= 100) {
         if (state.usb_present) {
-             lv_image_set_src(icon, &bat_100_c);
+             lv_image_set_src(icon, &TBAT100c);
         }else{
-            lv_image_set_src(icon, &bat_100);
+            lv_image_set_src(icon, &TBAT100);
         }
-    } else if (level > 60) {
+    } else if (level >= 80) {
         if (state.usb_present) {
-             lv_image_set_src(icon, &bat_80_c);
+             lv_image_set_src(icon, &TBAT80c);
         }else{
-            lv_image_set_src(icon, &bat_80);
+            lv_image_set_src(icon, &TBAT80);
         }
-    } else if (level > 40) {
+    } else if (level >= 60) {
         if (state.usb_present) {
-             lv_image_set_src(icon, &bat_60_c);
+             lv_image_set_src(icon, &TBAT60c);
         }else{
-            lv_image_set_src(icon, &bat_60);
+            lv_image_set_src(icon, &TBAT60);
         }
-    } else if (level > 20) {
+    } else if (level >= 40) {
         if (state.usb_present) {
-             lv_image_set_src(icon, &bat_40_c);
+             lv_image_set_src(icon, &TBAT40c);
         }else{
-            lv_image_set_src(icon, &bat_40);
+            lv_image_set_src(icon, &TBAT40);
         }
-    } else if (level > 5) {
+    } else if (level >= 20) {
         if (state.usb_present) {
-             lv_image_set_src(icon, &bat_20_c);
+             lv_image_set_src(icon, &TBAT20c);
         }else{
-            lv_image_set_src(icon, &bat_20);
+            lv_image_set_src(icon, &TBAT20);
         }
     } else {
         if (state.usb_present) {
-             lv_image_set_src(icon, &bat_00_c);
+             lv_image_set_src(icon, &TBAT00c);
         }else{
-            lv_image_set_src(icon, &bat_00);
+            lv_image_set_src(icon, &TBAT00);
         }
     }
 #endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */

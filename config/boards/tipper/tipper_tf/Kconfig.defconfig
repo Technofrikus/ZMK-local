@@ -35,6 +35,7 @@ config ZMK_DISPLAY
 	select LV_USE_CONT
 	select LV_USE_LABEL
 	select LV_USE_IMAGE
+	select LV_USE_CANVAS
 	select LV_FONT_MONTSERRAT_26
 
 choice ZMK_DISPLAY_STATUS_SCREEN
