@@ -49,6 +49,14 @@ static lv_obj_t *bt_label;
 static lv_obj_t *bat_image; // Battery image object
 static lv_obj_t *screen_parent;
 
+static void request_full_screen_refresh() {
+    if (screen_parent == NULL) {
+        return;
+    }
+    // Invalidate the whole screen to force a full redraw and avoid ghosting
+    lv_obj_invalidate(screen_parent);
+}
+
 // Initialize BT label
 static void init_bt_label() {
     if (screen_parent == NULL || bt_label != NULL) return;
@@ -107,6 +115,8 @@ static void update_battery_image(uint8_t level, bool usb_present) {
     if (img_src != NULL) {
         lv_image_set_src(bat_image, img_src);
     }
+
+    request_full_screen_refresh();
 }
 
 // Update BT text on canvas
@@ -127,6 +137,8 @@ static void update_bt_text(struct zmk_endpoint_instance endpoint, bool connected
     } else {
         lv_label_set_text(bt_label, "");
     }
+
+    request_full_screen_refresh();
 }
 
 // Battery update handler
