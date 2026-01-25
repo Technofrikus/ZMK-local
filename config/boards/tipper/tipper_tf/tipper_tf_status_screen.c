@@ -77,7 +77,7 @@ static void init_bt_image() {
     bt_image = lv_image_create(screen_parent);
     if (bt_image != NULL) {
         lv_image_set_src(bt_image, &bt_rot_blank);
-        lv_obj_align(bt_image, LV_ALIGN_RIGHT_MID, -2, 20);
+        lv_obj_align(bt_image, LV_ALIGN_RIGHT_MID, -4, 20);
         lv_obj_clear_flag(bt_image, LV_OBJ_FLAG_HIDDEN);
         lv_obj_move_foreground(bt_image);
     }
