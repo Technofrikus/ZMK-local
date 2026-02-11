@@ -40,7 +40,8 @@
 	kscan0: kscan {
 		compatible = "zmk,kscan-gpio-matrix";
 		label = "KSCAN";
-        
+		wakeup-source;
+
 		debounce-period = <6>;
 
 		diode-direction = "row2col";
