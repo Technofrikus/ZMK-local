@@ -1,0 +1,10 @@
+file_format: 1
+id: planckton
+name: Planckton 4x10
+type: shield
+url: https://github.com/tf/ZMK-tf2
+# Hier werden die verfügbaren physikalischen Layouts für ZMK Studio registriert
+features:
+  - studio
+siblings:
+  - planckton_physical_layout

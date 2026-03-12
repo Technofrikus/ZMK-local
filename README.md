@@ -2,19 +2,13 @@
 
 Ein universelles ZMK User Config Repository mit Zephyr 4.1 / HWMv2 Support für die Entwicklung von ZMK-Firmware für verschiedene Keyboards.
 
-## WICHTIG: Referenz-Dateien
-
-**KRITISCH:** Die Dateien im Verzeichnis `for reference only/` dienen **NUR als Referenz** und werden **NIEMALS direkt verlinkt oder kopiert**. Sie werden nur als Informationsquelle für Neuimplementierungen verwendet. Das Repository ist vollständig unabhängig von diesen Referenz-Dateien.
-
 ## Übersicht
 
 Dieses Repository enthält:
 
 - **Zephyr 4.1 / HWMv2 Support** - Neueste Zephyr-Version mit Hardware Model V2
-- **Tipper_TF Keyboard** - Neuimplementierung des Tipper_TF Keyboards
-- **Phasenweise Implementierung:**
-  - **Phase 1:** Grundkonfiguration OHNE Display, MIT ZMK Studio ✅
-  - **Phase 2:** Display-Treiber Integration (geplant)
+- **Tipper_TF Keyboard** - Vollständige Implementierung des Tipper_TF Keyboards (inkl. Display)
+- **Modularer Aufbau:** Einfaches Hinzufügen weiterer Keyboards und Board-Definitionen
 - **Docker (VS Code Dev Container)** - Primäre Build-Methode
 - **Local Host Build-Skripte** - Alternative Build-Methode
 
@@ -30,7 +24,7 @@ ZMK-tf2/
 ├── keyboards/
 │   └── tipper_tf/
 │       ├── tipper_tf.keymap        # Keymap
-│       └── tipper_tf.conf          # Config (Phase 1: Studio, NO Display)
+│       └── tipper_tf.conf          # Config (Phase 1: Studio, Phase 2: Display)
 ├── .devcontainer/                  # VS Code Dev Container Setup
 │   ├── devcontainer.json
 │   └── Dockerfile
@@ -279,120 +273,96 @@ west flash
 nrfjprog -f nrf52 --program build/zephyr/zephyr.hex --chiperase --reset
 ```
 
-## Phase 1: Grundkonfiguration (OHNE Display, MIT ZMK Studio)
+## ZMK Update & Wartung
 
-Phase 1 ist implementiert und getestet. Die Konfiguration enthält:
+Um die ZMK-Firmware (Core) auf den neuesten Stand zu bringen (entsprechend der `config/west.yml`), muss der Befehl `west update` ausgeführt werden.
+
+### Option 1: Mit Docker (Empfohlen)
+
+Wenn du `west` nicht lokal installiert hast, kannst du das Update einfach über Docker ausführen:
+
+**Einmaliger Befehl:**
+```bash
+docker run --rm \
+  -v "$(pwd):/workspaces/ZMK-tf2" \
+  -w /workspaces/ZMK-tf2 \
+  docker.io/zmkfirmware/zmk-build-arm:stable \
+  bash -c "west init -l config && west update"
+```
+
+**Interaktives Arbeiten im Container:**
+Wenn du im Container bleiben möchtest, um mehrere Befehle auszuführen:
+```bash
+docker run --rm -it \
+  -v "$(pwd):/workspaces/ZMK-tf2" \
+  -w /workspaces/ZMK-tf2 \
+  docker.io/zmkfirmware/zmk-build-arm:stable \
+  bash
+```
+*Nach dem Start bist du im Container und kannst Befehle wie `west update` oder `west build` direkt eingeben.*
+
+### Option 2: Im VS Code Dev Container
+
+Falls du den Dev Container nutzt, öffne einfach ein Terminal **im Container** und gib ein:
+
+```bash
+west update
+```
+
+### Option 3: Local Host
+
+Dafür muss `west` lokal installiert sein (siehe **Ersteinrichtung -> Schritt 2**). Falls du die Fehlermeldung `command not found: west` erhältst, ist West nicht in deinem PATH oder nicht installiert.
+
+```bash
+west update
+```
+
+## Planckton Support
+
+Das **Planckton** ist ein 4x10 Ortho Keyboard, basierend auf einem `nice_nano` (nrf52840).
+
+- ✅ 4x10 Ortho Matrix
+- ✅ Optionaler EC11 Encoder Support
+- ✅ ZMK Studio Support (Physical Layout HWMv2)
+- ✅ BLE und USB Support
+
+### Bauen für Planckton
+
+Um die Firmware für das Planckton zu bauen:
+
+**Mit Docker:**
+```bash
+docker run --rm \
+  -v "$(pwd):/workspaces/ZMK-tf2" \
+  -w /workspaces/ZMK-tf2 \
+  docker.io/zmkfirmware/zmk-build-arm:stable \
+  bash -c "west build -s zmk/app -b nice_nano_v2 -- -DSHIELD=planckton -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/planckton"
+```
+
+**Im VS Code Dev Container:**
+```bash
+west build -s zmk/app -b nice_nano_v2 -- -DSHIELD=planckton -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/planckton
+```
+
+### Konfiguration anpassen
+
+Die Hardware-Definitionen (Pins) findest du hier:
+- `config/boards/shields/planckton/planckton.overlay`
+
+Deine Keymap und User-Settings findest du hier:
+- `keyboards/planckton/planckton.keymap`
+- `keyboards/planckton/planckton.conf`
+
+## Tipper_TF Support
+
+Die Implementierung des Tipper_TF Keyboards ist abgeschlossen:
 
 - ✅ Board-Definition (HWMv2)
 - ✅ Keymap mit mehreren Layern
 - ✅ ZMK Studio Support
 - ✅ USB und BLE Support
 - ✅ Battery-Voltage-Divider
-- ❌ **KEIN Display** (wird in Phase 2 hinzugefügt)
-
-### Erfolgskriterien Phase 1
-
-- [x] Board kompiliert erfolgreich
-- [x] Firmware kann geflasht werden
-- [ ] Keyboard funktioniert (Tastatur-Eingaben) - **Zu testen**
-- [ ] ZMK Studio kann sich verbinden - **Zu testen**
-- [ ] BLE und USB funktionieren - **Zu testen**
-
-## Phase 2: Display-Integration (Geplant)
-
-**Nur nach erfolgreicher Phase 1:**
-
-1. Display-Treiber aus Referenz analysieren
-2. Display-Konfiguration in Board-Definition integrieren
-3. Config für Display aktualisieren
-4. Display-Funktionalität testen
-
-## Wichtige Migrationen (Zephyr 4.1)
-
-### Board-Revisionen
-
-Zephyr 4.1 verwendet Board-Revisionen statt separater Board-Definitionen:
-- Alte Syntax: `nice_nano_v2`
-- Neue Syntax: `nice_nano@2.0.0` oder `nice_nano` (default)
-
-### HWMv2 Konvertierung
-
-Board-Dateien sind in `boards/arm/<board>/` strukturiert:
-- `board.cmake` - CMake-Konfiguration
-- `Kconfig.defconfig` - Board-spezifische Kconfig
-- `<board>.dts` - Devicetree-Definition
-- `<board>.yaml` - Board-Metadaten
-- `<board>.zmk.yml` - ZMK Hardware-Metadaten
-
-### Kconfig → Devicetree
-
-Einige Konfigurationen wurden von Kconfig zu Devicetree verschoben:
-- DC/DC Konfiguration jetzt in `.dts` Dateien
-- `CONFIG_WS2812_STRIP=y` wird automatisch aktiviert (nicht mehr nötig)
-
-## Troubleshooting
-
-### Docker-Probleme
-
-1. **Docker Daemon läuft nicht**
-   ```bash
-   # Docker Desktop manuell starten
-   open -a Docker
-   
-   # Prüfen ob Docker läuft
-   docker ps
-   ```
-
-2. **Docker Image nicht gefunden**
-   - Stelle sicher, dass du `zmkfirmware/zmk-build-arm:stable` verwendest
-   - Image manuell pullen: `docker pull zmkfirmware/zmk-build-arm:stable`
-
-3. **Docker Container startet nicht (VS Code)**
-   - Prüfe, ob Docker Desktop läuft
-   - Prüfe Docker-Logs in VS Code
-   - Container manuell neu bauen: `F1` → "Remote-Containers: Rebuild Container"
-
-### Build-Fehler
-
-1. **West workspace nicht initialisiert**
-   ```bash
-   west init -l config
-   west update
-   west zephyr-export
-   ```
-
-2. **Zephyr SDK nicht gefunden (Local Host)**
-   - Prüfe `ZEPHYR_SDK_INSTALL_DIR` Umgebungsvariable
-   - Installiere Zephyr SDK falls nicht vorhanden
-   - Setze die Variable in deiner Shell-Konfiguration (`.zshrc` oder `.bashrc`)
-
-3. **West nicht gefunden (Local Host)**
-   - Prüfe, ob west installiert ist: `which west`
-   - Falls nicht: `pipx install west`
-   - PATH aktualisieren: `export PATH="$HOME/.local/bin:$PATH"`
-
-4. **Board nicht gefunden**
-   - In Zephyr 4.1 / HWMv2 werden Boards einfach mit ihrem Namen referenziert
-   - Beispiel: `nice_nano` statt `nicekeyboards/nice_nano`
-   - Verfügbare Boards anzeigen: `west boards`
-
-5. **Python externally-managed-environment Fehler (macOS)**
-   - Verwende `pipx` statt `pip3 install --user`:
-     ```bash
-     brew install pipx
-     pipx install west
-     ```
-
-### ZMK Studio Verbindungsprobleme
-
-1. **Studio kann sich nicht verbinden**
-   - Prüfe, ob `CONFIG_ZMK_STUDIO=y` in Config aktiviert ist
-   - Prüfe USB-Verbindung
-   - Prüfe, ob Firmware korrekt geflasht wurde
-
-2. **Keyboard bootet locked**
-   - Setze `CONFIG_ZMK_STUDIO_LOCKING=n` in Config
-   - Flash Firmware erneut
+- ✅ Display-Integration
 
 ## Weitere Keyboards hinzufügen
 
@@ -402,13 +372,6 @@ Um weitere Keyboards hinzuzufügen:
 2. Erstelle `<keyboard_name>.keymap` und `<keyboard_name>.conf`
 3. Falls nötig, erstelle Board-Definition in `config/boards/arm/<board>/`
 4. Verwende `./scripts/build.sh <keyboard> <board>` zum Bauen
-
-## Wichtige Regeln
-
-- **NIEMALS** Dateien aus `for reference only/` direkt kopieren oder verlinken
-- **NUR** als Informationsquelle für Neuimplementierung verwenden
-- Alle Dateien werden neu geschrieben, basierend auf Referenz-Informationen
-- Repository ist vollständig unabhängig von Referenz-Dateien
 
 ## Links
 
