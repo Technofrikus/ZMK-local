@@ -176,70 +176,49 @@ Falls der Test erfolgreich ist, ist die Umgebung bereit! Du kannst jetzt mit dem
 
 ## Firmware bauen
 
-### Option 1: Docker (Empfohlen - Einfachste Methode)
-
-**Für schnelle Builds ohne VS Code:**
+### Komfort-Weg (Empfohlen)
+Nutze das Build-Skript, das alle Docker-Befehle kapselt. Du musst dafür `west` nicht lokal installiert haben, nur Docker muss laufen.
 
 ```bash
-# Test-Build (optional, aber empfohlen)
-./scripts/test-build-docker.sh
+# Planckton bauen (Standard: nice_nano)
+./scripts/build.sh planckton
 
 # Tipper TF bauen
+./scripts/build.sh tipper_tf
+```
+
+**Was das Skript macht:**
+- Startet einen Docker-Container mit der passenden ZMK-Umgebung.
+- Erkennt automatisch das richtige Board (z.B. `nice_nano` für Planckton).
+- Setzt den `BOARD_ROOT` korrekt, damit deine eigenen Hardware-Definitionen in `config/` gefunden werden.
+- Kopiert die fertige `.uf2` Datei automatisch in den Ordner `output/` und benennt sie sinnvoll (z.B. `planckton_nice_nano.uf2`).
+
+### Diagnose & Fehlerbehebung
+Falls der Build fehlschlägt oder du Probleme mit deiner Umgebung vermutest, gibt es Diagnose-Skripte:
+
+```bash
+# Testet die Docker-Umgebung mit einem Standard-Keyboard (Corne)
+./scripts/test-build-docker.sh
+```
+*Nutze dieses Skript, um zu prüfen, ob ein Fehler an deinem Code oder an der Docker-Installation liegt. Wenn dieser Test erfolgreich ist, ist deine Umgebung korrekt eingerichtet.*
+
+### Manueller Docker-Weg
+Falls du volle Kontrolle über den Befehl benötigst:
+
+```bash
 docker run --rm \
   -v "$(pwd):/workspaces/ZMK-tf2" \
   -w /workspaces/ZMK-tf2 \
   docker.io/zmkfirmware/zmk-build-arm:stable \
-  bash -c "west build -s zmk/app -b tipper_tf -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/tipper_tf"
+  bash -c "west zephyr-export && west build -p always -s zmk/app -b nice_nano -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/planckton -DSHIELD=planckton"
 ```
 
-**Oder mit VS Code Dev Container:**
-
-1. **Docker Desktop starten** (falls noch nicht läuft)
-
-2. **VS Code öffnen:**
+### Option 2: VS Code Dev Container
+1. **Docker Desktop starten**
+2. **VS Code öffnen** und Dev Container starten (`F1` → "Remote-Containers: Reopen in Container")
+3. **Im Container-Terminal:**
    ```bash
-   code .
-   ```
-
-3. **Dev Container öffnen:**
-   - VS Code sollte automatisch vorschlagen, den Container zu öffnen
-   - Oder: `F1` → "Remote-Containers: Reopen in Container"
-   - Beim ersten Mal wird das Docker Image heruntergeladen (kann einige Minuten dauern)
-
-4. **West Workspace initialisieren** (beim ersten Mal):
-   - Im Container-Terminal:
-   ```bash
-   west init -l config
-   west update
-   west zephyr-export
-   ```
-
-5. **Firmware bauen:**
-   ```bash
-   west build -s zmk/app -b tipper_tf -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/tipper_tf
-   ```
-
-### Option 2: Local Host
-
-**Voraussetzungen:**
-- Zephyr SDK installiert
-- West installiert (via pipx, siehe Ersteinrichtung)
-
-1. **Zephyr SDK installieren:**
-   - Download von https://github.com/zephyrproject-rtos/sdk-ng/releases
-   - Installieren und `ZEPHYR_SDK_INSTALL_DIR` setzen:
-     ```bash
-     export ZEPHYR_SDK_INSTALL_DIR=/path/to/zephyr-sdk
-     ```
-
-2. **Setup-Skript ausführen** (beim ersten Mal):
-   ```bash
-   ./scripts/setup-local.sh
-   ```
-
-3. **Firmware bauen:**
-   ```bash
-   ./scripts/build.sh tipper_tf tipper_tf
+   west build -p always -s zmk/app -b nice_nano -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/planckton -DSHIELD=planckton
    ```
 
 ## Build-Kommandos
@@ -328,21 +307,11 @@ Das **Planckton** ist ein 4x10 Ortho Keyboard, basierend auf einem `nice_nano` (
 
 ### Bauen für Planckton
 
-Um die Firmware für das Planckton zu bauen:
-
-**Mit Docker:**
+Nutze das neue Build-Skript (empfohlen):
 ```bash
-docker run --rm \
-  -v "$(pwd):/workspaces/ZMK-tf2" \
-  -w /workspaces/ZMK-tf2 \
-  docker.io/zmkfirmware/zmk-build-arm:stable \
-  bash -c "west build -s zmk/app -b nice_nano_v2 -- -DSHIELD=planckton -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/planckton"
+./scripts/build.sh planckton
 ```
-
-**Im VS Code Dev Container:**
-```bash
-west build -s zmk/app -b nice_nano_v2 -- -DSHIELD=planckton -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/planckton
-```
+Die Firmware wird in `output/planckton_nice_nano.uf2` gespeichert.
 
 ### Konfiguration anpassen
 

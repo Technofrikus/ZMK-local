@@ -1,6 +1,6 @@
 #!/bin/bash
-# ZMK Build Script
-# Usage: ./scripts/build.sh <keyboard> <board> [shield]
+# ZMK Docker Build Script
+# Usage: ./scripts/build.sh <keyboard> [board] [shield]
 
 set -e
 
@@ -12,32 +12,51 @@ NC='\033[0m' # No Color
 
 # Get the repository root directory
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CONFIG_DIR="$REPO_ROOT/config"
 KEYBOARD_DIR="$REPO_ROOT/keyboards"
 
 # Check arguments
-if [ $# -lt 2 ]; then
-    echo -e "${RED}Usage: $0 <keyboard> <board> [shield]${NC}"
+if [ $# -lt 1 ]; then
+    echo -e "${RED}Usage: $0 <keyboard> [board] [shield]${NC}"
     echo ""
     echo "Examples:"
-    echo "  $0 tipper_tf tipper_tf"
-    echo "  $0 corne nice_nano -- -DSHIELD=corne_left"
+    echo "  $0 planckton          (Uses nice_nano and shield=planckton as default)"
+    echo "  $0 tipper_tf          (Uses tipper_tf board)"
     exit 1
 fi
 
 KEYBOARD=$1
 BOARD=$2
-SHIFT=2
-SHIELD_ARG=""
+SHIELD=$3
 
-# Check for shield argument
-if [ $# -gt 2 ]; then
-    SHIELD_ARG="-DSHIELD=$3"
-    SHIFT=3
+# Default Board/Shield Logic
+if [ -z "$BOARD" ]; then
+    case $KEYBOARD in
+        planckton)
+            BOARD="nice_nano"
+            ;;
+        tipper_tf)
+            BOARD="tipper_tf"
+            ;;
+        *)
+            echo -e "${YELLOW}No board specified, defaulting to nice_nano${NC}"
+            BOARD="nice_nano"
+            ;;
+    esac
 fi
 
-# Additional CMake arguments
-CMAKE_ARGS="${@:$((SHIFT+1))}"
+if [ -z "$SHIELD" ]; then
+    case $KEYBOARD in
+        planckton)
+            SHIELD="planckton"
+            ;;
+        tipper_tf)
+            SHIELD="" # Tipper TF is a board, not a shield
+            ;;
+        *)
+            SHIELD=$KEYBOARD
+            ;;
+    esac
+fi
 
 # Check if keyboard directory exists
 if [ ! -d "$KEYBOARD_DIR/$KEYBOARD" ]; then
@@ -45,68 +64,42 @@ if [ ! -d "$KEYBOARD_DIR/$KEYBOARD" ]; then
     exit 1
 fi
 
-# Set ZMK_CONFIG path
-ZMK_CONFIG="$KEYBOARD_DIR/$KEYBOARD"
-
-echo -e "${GREEN}ZMK Build${NC}"
-echo "=========="
+echo -e "${GREEN}ZMK Docker Build${NC}"
+echo "================"
 echo "Keyboard: $KEYBOARD"
-echo "Board: $BOARD"
-if [ -n "$SHIELD_ARG" ]; then
-    echo "Shield: $3"
-fi
-echo "Config: $ZMK_CONFIG"
+echo "Board:    $BOARD"
+echo "Shield:   ${SHIELD:-None}"
 echo ""
 
-# Check if west is installed
-if ! command -v west &> /dev/null; then
-    echo -e "${RED}✗ west is not installed${NC}"
-    echo ""
-    echo "Please install west first:"
-    echo "  ./scripts/setup-local.sh"
-    echo "  or"
-    echo "  pipx install west  (on macOS)"
-    exit 1
+# Construct the internal build command
+SHIELD_ARG=""
+if [ -n "$SHIELD" ]; then
+    SHIELD_ARG="-DSHIELD=$SHIELD"
 fi
 
-# Check if west workspace is initialized
-if [ ! -d "$REPO_ROOT/.west" ]; then
-    echo -e "${YELLOW}⚠ West workspace not initialized. Running setup...${NC}"
-    "$REPO_ROOT/scripts/setup-local.sh"
-fi
+# The command to run inside the Docker container
+DOCKER_CMD="west zephyr-export && west build -p always -s zmk/app -b $BOARD -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/$KEYBOARD -DBOARD_ROOT=/workspaces/ZMK-tf2/config $SHIELD_ARG"
 
-# Check if ZMK is cloned
-if [ ! -d "$REPO_ROOT/zmk" ]; then
-    echo -e "${YELLOW}⚠ ZMK not cloned yet. Updating west modules...${NC}"
-    cd "$REPO_ROOT"
-    west update
-    west zephyr-export
-fi
+echo -e "${YELLOW}Starting Docker container...${NC}"
 
-# Ensure we're in the repo root
-cd "$REPO_ROOT"
-
-# Build command
-# Add config directory to BOARD_ROOT so Zephyr can find our custom board
-BUILD_CMD="west build -s zmk/app -b $BOARD -- -DZMK_CONFIG=$ZMK_CONFIG -DBOARD_ROOT=$REPO_ROOT/config $SHIELD_ARG $CMAKE_ARGS"
-
-echo -e "${GREEN}Building...${NC}"
-echo "Command: $BUILD_CMD"
-echo ""
-
-# Run build
-$BUILD_CMD
+docker run --rm \
+  -v "$REPO_ROOT:/workspaces/ZMK-tf2" \
+  -w /workspaces/ZMK-tf2 \
+  docker.io/zmkfirmware/zmk-build-arm:stable \
+  bash -c "$DOCKER_CMD"
 
 # Check if build was successful
 if [ $? -eq 0 ]; then
     echo ""
     echo -e "${GREEN}Build successful!${NC}"
     echo "Firmware location: $REPO_ROOT/build/zephyr"
-    echo ""
-    echo "To flash the firmware, use:"
-    echo "  west flash"
-    echo "  or"
-    echo "  nrfjprog -f nrf52 --program build/zephyr/zephyr.hex --chiperase --reset"
+    
+    # Optional: Copy .uf2 to a more accessible place
+    if [ -f "$REPO_ROOT/build/zephyr/zmk.uf2" ]; then
+        mkdir -p "$REPO_ROOT/output"
+        cp "$REPO_ROOT/build/zephyr/zmk.uf2" "$REPO_ROOT/output/${KEYBOARD}_${BOARD}.uf2"
+        echo -e "${GREEN}Copied firmware to: output/${KEYBOARD}_${BOARD}.uf2${NC}"
+    fi
 else
     echo ""
     echo -e "${RED}Build failed!${NC}"
