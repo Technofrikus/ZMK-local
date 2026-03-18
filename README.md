@@ -257,7 +257,7 @@ Um weitere Keyboards hinzuzufügen:
 1. Erstelle Verzeichnis `keyboards/<keyboard_name>/`
 2. Erstelle `<keyboard_name>.keymap` und `<keyboard_name>.conf`
 3. Falls nötig, erstelle Board-Definition in `config/boards/arm/<board>/`
-4. Verwende `./scripts/build.sh <keyboard> <board>` zum Bauen
+4. Verwende `./scripts/build.sh <keyboard> <board>` zum Bauena
 
 ## Links
 

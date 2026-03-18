@@ -12,6 +12,7 @@
         zmk,kscan = &kscan0;
         zmk,physical-layout = &planckton_physical_layout;
         zmk,studio-rpc-uart = &studio_rpc_usb_uart;
+        zephyr,settings-partition = &storage_partition;
     };
 
     /* Matrix-Transform für 4x10 Layout */
@@ -141,4 +142,8 @@ zephyr_udc0: &usbd {
         output-low;
         line-name = "encoder-common-ground";
     };
+};
+
+&uicr {
+    nfct-pins-as-gpios;
 };
