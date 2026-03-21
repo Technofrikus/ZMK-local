@@ -45,7 +45,6 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/workspaces/ZMK-tf2/build-test/zephyr/lib/hash/cmake_install.cmake")
   include("/workspaces/ZMK-tf2/build-test/zephyr/lib/heap/cmake_install.cmake")
   include("/workspaces/ZMK-tf2/build-test/zephyr/lib/mem_blocks/cmake_install.cmake")
-  include("/workspaces/ZMK-tf2/build-test/zephyr/lib/net_buf/cmake_install.cmake")
   include("/workspaces/ZMK-tf2/build-test/zephyr/lib/os/cmake_install.cmake")
   include("/workspaces/ZMK-tf2/build-test/zephyr/lib/utils/cmake_install.cmake")
 

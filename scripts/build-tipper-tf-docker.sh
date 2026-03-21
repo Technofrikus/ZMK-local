@@ -12,6 +12,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=zmk-ci-env.sh
+source "$REPO_ROOT/scripts/zmk-ci-env.sh"
 
 echo -e "${BLUE}ZMK Tipper TF Build (Docker)${NC}"
 echo "===================================="
@@ -55,19 +57,20 @@ echo ""
 echo -e "${BLUE}Building Tipper TF firmware...${NC}"
 echo ""
 
-# Run build in container
+# Run build in container (same image + west update + pristine build as upstream ZMK CI)
 docker run --rm \
     -v "$REPO_ROOT:/workspaces/ZMK-tf2" \
     -w /workspaces/ZMK-tf2 \
-    docker.io/zmkfirmware/zmk-build-arm:stable \
+    "$ZMK_BUILD_IMAGE" \
     bash -c "
         set -e
-        
-        # Export Zephyr CMake package
+        cd /workspaces/ZMK-tf2
+        if [ ! -d .west ]; then
+            west init -l config
+        fi
+        west update --fetch-opt=--filter=tree:0
         west zephyr-export
-        
-        # Build
-        west build -s zmk/app -b tipper_tf -- \
+        west build -s zmk/app -p -b tipper_tf -- \
             -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/tipper_tf \
             -DBOARD_ROOT=/workspaces/ZMK-tf2/config
         

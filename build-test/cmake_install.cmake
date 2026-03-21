@@ -43,7 +43,6 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/workspaces/ZMK-tf2/build-test/src/boot/cmake_install.cmake")
   include("/workspaces/ZMK-tf2/build-test/src/split/cmake_install.cmake")
   include("/workspaces/ZMK-tf2/build-test/src/display/cmake_install.cmake")
-  include("/workspaces/ZMK-tf2/build-test/src/settings/cmake_install.cmake")
 
 endif()
 

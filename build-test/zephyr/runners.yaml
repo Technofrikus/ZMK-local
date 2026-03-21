@@ -2,13 +2,15 @@
 runners:
 - uf2
 - nrfjprog
+- uf2
+- nrfjprog
 
 # Default flash runner if --runner is not given.
 flash-runner: uf2
 
 # Common runner configuration values.
 config:
-  board_dir: /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano
+  board_dir: /workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano
   # Build outputs:
   elf_file: zmk.elf
   hex_file: zmk.hex
@@ -26,5 +28,19 @@ args:
     []
 
   nrfjprog:
+    - --nrf-family=NRF52
+    - --softreset
+    - --nrf-family=NRF52
+    - --softreset
+    - --nrf-family=NRF52
+    - --softreset
+  uf2:
+    []
+
+  nrfjprog:
+    - --nrf-family=NRF52
+    - --softreset
+    - --nrf-family=NRF52
+    - --softreset
     - --nrf-family=NRF52
     - --softreset

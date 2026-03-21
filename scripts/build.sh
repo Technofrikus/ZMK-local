@@ -12,6 +12,8 @@ NC='\033[0m' # No Color
 
 # Get the repository root directory
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=zmk-ci-env.sh
+source "$REPO_ROOT/scripts/zmk-ci-env.sh"
 KEYBOARD_DIR="$REPO_ROOT/keyboards"
 
 # Check arguments
@@ -77,15 +79,22 @@ if [ -n "$SHIELD" ]; then
     SHIELD_ARG="-DSHIELD=$SHIELD"
 fi
 
-# The command to run inside the Docker container
-DOCKER_CMD="west zephyr-export && west build -p always -s zmk/app -b $BOARD -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/$KEYBOARD -DBOARD_ROOT=/workspaces/ZMK-tf2/config $SHIELD_ARG"
+# Same sequence as upstream CI: west init if needed, west update (filter), zephyr-export, west build -s … -p
+DOCKER_CMD="set -e
+cd /workspaces/ZMK-tf2
+if [ ! -d .west ]; then
+  west init -l config
+fi
+west update --fetch-opt=--filter=tree:0
+west zephyr-export
+west build -s zmk/app -p -b $BOARD -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/$KEYBOARD -DBOARD_ROOT=/workspaces/ZMK-tf2/config $SHIELD_ARG"
 
 echo -e "${YELLOW}Starting Docker container...${NC}"
 
 docker run --rm \
   -v "$REPO_ROOT:/workspaces/ZMK-tf2" \
   -w /workspaces/ZMK-tf2 \
-  docker.io/zmkfirmware/zmk-build-arm:stable \
+  "$ZMK_BUILD_IMAGE" \
   bash -c "$DOCKER_CMD"
 
 # Check if build was successful

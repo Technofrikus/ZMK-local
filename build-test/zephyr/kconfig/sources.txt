@@ -3597,9 +3597,11 @@
 /workspaces/ZMK-tf2/zmk/app/boards/shields/zodiark/Kconfig.defconfig
 /workspaces/ZMK-tf2/zmk/app/boards/shields/zodiark/Kconfig.shield
 /workspaces/ZMK-tf2/zmk/app/module/Kconfig
+/workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/Kconfig.nice_nano
 /workspaces/ZMK-tf2/zmk/app/module/drivers/Kconfig
 /workspaces/ZMK-tf2/zmk/app/module/drivers/display/Kconfig
 /workspaces/ZMK-tf2/zmk/app/module/drivers/display/Kconfig.il0323
+/workspaces/ZMK-tf2/zmk/app/module/drivers/display/Kconfig.jd79653
 /workspaces/ZMK-tf2/zmk/app/module/drivers/gpio/Kconfig
 /workspaces/ZMK-tf2/zmk/app/module/drivers/gpio/Kconfig.595
 /workspaces/ZMK-tf2/zmk/app/module/drivers/gpio/Kconfig.max7318

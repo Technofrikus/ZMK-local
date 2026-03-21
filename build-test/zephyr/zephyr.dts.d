@@ -1,5 +1,5 @@
 empty_file.o: /workspaces/ZMK-tf2/zephyr/misc/empty_file.c \
- /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano.dts \
+ /workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/nice_nano.dts \
  /workspaces/ZMK-tf2/zephyr/dts/arm/nordic/nrf52840_qiaa.dtsi \
  /workspaces/ZMK-tf2/zephyr/dts/common/mem.h \
  /workspaces/ZMK-tf2/zephyr/dts/arm/nordic/nrf52840.dtsi \
@@ -27,10 +27,8 @@ empty_file.o: /workspaces/ZMK-tf2/zephyr/misc/empty_file.c \
  /workspaces/ZMK-tf2/zephyr/include/zephyr/dt-bindings/adc/nrf-saadc-v2.h \
  /workspaces/ZMK-tf2/zephyr/include/zephyr/dt-bindings/adc/nrf-saadc.h \
  /workspaces/ZMK-tf2/zephyr/include/zephyr/dt-bindings/regulator/nrf5x.h \
- /workspaces/ZMK-tf2/zmk/app/dts/common/nordic/nrf52840_uf2_boot_mode.dtsi \
- /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano-pinctrl.dtsi \
- /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/arduino_pro_micro_pins.dtsi \
- /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano_2_0_0.overlay \
+ /workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/nice_nano-pinctrl.dtsi \
+ /workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/arduino_pro_micro_pins.dtsi \
  /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne_left.overlay \
  /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne.dtsi \
  /workspaces/ZMK-tf2/zmk/app/include/dt-bindings/zmk/matrix_transform.h \
@@ -38,8 +36,6 @@ empty_file.o: /workspaces/ZMK-tf2/zephyr/misc/empty_file.c \
  /workspaces/ZMK-tf2/zmk/app/dts/layouts/foostan/corne/position_map.dtsi \
  /workspaces/ZMK-tf2/zmk/app/dts/physical_layouts.dtsi \
  /workspaces/ZMK-tf2/zmk/app/dts/layouts/foostan/corne/6column.dtsi \
- /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/boards/nice_nano.overlay \
- /workspaces/ZMK-tf2/zephyr/include/zephyr/dt-bindings/led/led.h \
  /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne.keymap \
  /workspaces/ZMK-tf2/zmk/app/dts/behaviors.dtsi \
  /workspaces/ZMK-tf2/zmk/app/dts/behaviors/key_press.dtsi \
@@ -75,4 +71,5 @@ empty_file.o: /workspaces/ZMK-tf2/zephyr/misc/empty_file.c \
  /workspaces/ZMK-tf2/zmk/app/dts/behaviors/mouse_key_press.dtsi \
  /workspaces/ZMK-tf2/zmk/app/dts/behaviors/mouse_move.dtsi \
  /workspaces/ZMK-tf2/zmk/app/dts/behaviors/mouse_scroll.dtsi \
+ /workspaces/ZMK-tf2/zmk/app/dts/behaviors/display_debug.dtsi \
  /workspaces/ZMK-tf2/zmk/app/include/dt-bindings/zmk/bt.h

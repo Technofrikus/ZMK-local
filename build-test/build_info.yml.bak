@@ -1,5 +1,4 @@
 west:
-  command: /usr/local/bin/west build -d build-test -s zmk/app -b nicekeyboards/nice_nano
-    -- -DSHIELD=corne_left
+  command: /usr/local/bin/west build -d build-test -s zmk/app -p -b nice_nano -- -DSHIELD=corne_left
   topdir: /workspaces/ZMK-tf2
   version: 1.5.0

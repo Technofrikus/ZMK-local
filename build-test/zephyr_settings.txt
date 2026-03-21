@@ -12,5 +12,6 @@
 "DTS_ROOT":"/workspaces/ZMK-tf2/modules/hal/espressif"
 "DTS_ROOT":"/workspaces/ZMK-tf2/modules/hal/gigadevice"
 "DTS_ROOT":"/workspaces/ZMK-tf2/modules/hal/nuvoton"
+"BOARD_ROOT":"/workspaces/ZMK-tf2/zmk/app/module"
 "DTS_ROOT":"/workspaces/ZMK-tf2/zmk/app/module"
 "MODULE_EXT_ROOT":"/workspaces/ZMK-tf2/zmk/app/keymap-module"

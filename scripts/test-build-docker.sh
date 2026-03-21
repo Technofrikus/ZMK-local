@@ -12,6 +12,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=zmk-ci-env.sh
+source "$REPO_ROOT/scripts/zmk-ci-env.sh"
 
 echo -e "${BLUE}ZMK Docker Test Build${NC}"
 echo "========================"
@@ -65,12 +67,11 @@ echo "  Board: $TEST_BOARD"
 echo "  Shield: $TEST_SHIELD"
 echo ""
 
-# Run test build in container
-# Using zmk-build-arm:stable which is the current stable build image
+# Run test build in container (same image + west update + build flags as upstream ZMK CI)
 docker run --rm \
     -v "$REPO_ROOT:/workspaces/ZMK-tf2" \
     -w /workspaces/ZMK-tf2 \
-    docker.io/zmkfirmware/zmk-build-arm:stable \
+    "$ZMK_BUILD_IMAGE" \
     bash -c "
         set -e
         
@@ -90,7 +91,7 @@ docker run --rm \
         
         echo ''
         echo 'Updating west modules (this may take a while)...'
-        west update
+        west update --fetch-opt=--filter=tree:0
         
         echo ''
         echo 'Exporting Zephyr CMake package...'
@@ -101,7 +102,7 @@ docker run --rm \
         echo '  Board: $TEST_BOARD'
         echo '  Shield: $TEST_SHIELD'
         echo ''
-        west build -d build-test -s zmk/app -b $TEST_BOARD -- -DSHIELD=$TEST_SHIELD
+        west build -d build-test -s zmk/app -p -b $TEST_BOARD -- -DSHIELD=$TEST_SHIELD
         
         echo ''
         echo '✓ Build successful!'

@@ -30,6 +30,7 @@ ZMK-tf2/
 ├── .vscode/                        # VS Code Settings
 │   └── settings.json
 ├── scripts/                        # Build-Hilfsskripte
+│   ├── zmk-ci-env.sh               # Image-Tag wie ZMK upstream CI (4.1)
 │   ├── build.sh                    # Build-Skript
 │   ├── setup-local.sh              # Setup-Skript für ohne Docker, nicht empfohlen
 │   └── test-build-docker.sh        # Test-Build mit Docker, ob Umgebung korrekt eingerichtet ist
@@ -90,7 +91,7 @@ You can now build your keyboard.
 
 **Wichtige Erkenntnisse aus dem Setup:**
 
-- ✅ Docker Image: `zmkfirmware/zmk-build-arm:stable` (nicht `zmk-dev-arm:latest`)
+- ✅ Docker Image: `zmkfirmware/zmk-build-arm:4.1` (wie die offizielle ZMK-GitHub-Action, nicht `zmk-dev-arm:latest`)
 - ✅ Board-Namen in Zephyr 4.1: Einfacher Name (z.B. `nice_nano` statt `nicekeyboards/nice_nano`)
 - ✅ Docker Desktop muss laufen, bevor Container gestartet werden können
 
@@ -177,8 +178,8 @@ Falls du volle Kontrolle über den Befehl benötigst:
 docker run --rm \
   -v "$(pwd):/workspaces/ZMK-tf2" \
   -w /workspaces/ZMK-tf2 \
-  docker.io/zmkfirmware/zmk-build-arm:stable \
-  bash -c "west zephyr-export && west build -p always -s zmk/app -b nice_nano -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/planckton -DSHIELD=planckton"
+  docker.io/zmkfirmware/zmk-build-arm:4.1 \
+  bash -c 'set -e; cd /workspaces/ZMK-tf2; [ -d .west ] || west init -l config; west update --fetch-opt=--filter=tree:0; west zephyr-export; west build -s zmk/app -p -b nice_nano -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/planckton -DSHIELD=planckton'
 ```
 
 ### Option 2: VS Code Dev Container
@@ -187,7 +188,7 @@ docker run --rm \
 2. **VS Code öffnen** und Dev Container starten (`F1` → "Remote-Containers: Reopen in Container")
 3. **Im Container-Terminal:**
   ```bash
-   west build -p always -s zmk/app -b nice_nano -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/planckton -DSHIELD=planckton
+   west build -s zmk/app -p -b nice_nano -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/planckton -DSHIELD=planckton
   ```
 
 ## Build-Kommandos
@@ -195,8 +196,8 @@ docker run --rm \
 ### Docker (VS Code Dev Container)
 
 ```bash
-# Im Container-Terminal
-west build -s zmk/app -b tipper_tf -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/tipper_tf
+# Im Container-Terminal (nach west update wie in der CI)
+west build -s zmk/app -p -b tipper_tf -- -DZMK_CONFIG=/workspaces/ZMK-tf2/keyboards/tipper_tf
 ```
 
 ## Flashen der Firmware
@@ -213,7 +214,7 @@ nrfjprog -f nrf52 --program build/zephyr/zephyr.hex --chiperase --reset
 
 ## ZMK Update & Wartung
 
-Um die ZMK-Firmware (Core) auf den neuesten Stand zu bringen (entsprechend der `config/west.yml`), muss der Befehl `west update` ausgeführt werden.
+Um die ZMK-Firmware (Core) auf den neuesten Stand zu bringen (entsprechend der `config/west.yml`), wird wie in der offiziellen ZMK-CI `west update --fetch-opt=--filter=tree:0` verwendet (schlanker Fetch, gleiche Commits).
 
 ### Option 1: Mit Docker (Empfohlen)
 
@@ -225,8 +226,8 @@ Wenn du `west` nicht lokal installiert hast, kannst du das Update einfach über 
 docker run --rm \
   -v "$(pwd):/workspaces/ZMK-tf2" \
   -w /workspaces/ZMK-tf2 \
-  docker.io/zmkfirmware/zmk-build-arm:stable \
-  bash -c "west init -l config && west update"
+  docker.io/zmkfirmware/zmk-build-arm:4.1 \
+  bash -c "west init -l config && west update --fetch-opt=--filter=tree:0"
 ```
 
 **Interaktives Arbeiten im Container:**
@@ -236,18 +237,18 @@ Wenn du im Container bleiben möchtest, um mehrere Befehle auszuführen:
 docker run --rm -it \
   -v "$(pwd):/workspaces/ZMK-tf2" \
   -w /workspaces/ZMK-tf2 \
-  docker.io/zmkfirmware/zmk-build-arm:stable \
+  docker.io/zmkfirmware/zmk-build-arm:4.1 \
   bash
 ```
 
-*Nach dem Start bist du im Container und kannst Befehle wie `west update` oder `west build` direkt eingeben.*
+*Nach dem Start bist du im Container und kannst Befehle wie `west update --fetch-opt=--filter=tree:0` oder `west build` direkt eingeben.*
 
 ### Option 2: Im VS Code Dev Container
 
 Falls du den Dev Container nutzt, öffne einfach ein Terminal **im Container** und gib ein:
 
 ```bash
-west update
+west update --fetch-opt=--filter=tree:0
 ```
 
 ## Weitere Keyboards hinzufügen

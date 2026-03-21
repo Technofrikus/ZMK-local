@@ -69,16 +69,10 @@ else
     echo -e "${GREEN}✓ West workspace already initialized${NC}"
 fi
 
-# Check if ZMK is cloned
-if [ ! -d "$REPO_ROOT/zmk" ]; then
-    echo -e "${YELLOW}⚠ ZMK not cloned yet${NC}"
-    echo "Updating west modules (this may take a while)..."
-    cd "$REPO_ROOT"
-    west update
-    echo -e "${GREEN}✓ ZMK cloned${NC}"
-else
-    echo -e "${GREEN}✓ ZMK already cloned${NC}"
-fi
+# Same as upstream CI: west update before every build
+echo "Updating west modules (this may take a while)..."
+cd "$REPO_ROOT"
+west update --fetch-opt=--filter=tree:0
 
 # Export Zephyr CMake package
 echo "Exporting Zephyr CMake package..."
@@ -127,7 +121,7 @@ echo ""
 
 # Build command
 BUILD_DIR="$REPO_ROOT/build-test"
-BUILD_CMD="west build -d $BUILD_DIR -s zmk/app -b $TEST_BOARD -- -DSHIELD=$TEST_SHIELD"
+BUILD_CMD="west build -d $BUILD_DIR -s zmk/app -p -b $TEST_BOARD -- -DSHIELD=$TEST_SHIELD"
 
 echo -e "${BLUE}Building...${NC}"
 echo "Command: $BUILD_CMD"
@@ -143,7 +137,7 @@ if $BUILD_CMD; then
     echo -e "${GREEN}ZMK build environment is working correctly!${NC}"
     echo ""
     echo "You can now build your Tipper TF keyboard with:"
-    echo "  west build -s zmk/app -b tipper_tf -- -DZMK_CONFIG=$REPO_ROOT/keyboards/tipper_tf"
+    echo "  west build -s zmk/app -p -b tipper_tf -- -DZMK_CONFIG=$REPO_ROOT/keyboards/tipper_tf"
     exit 0
 else
     echo ""

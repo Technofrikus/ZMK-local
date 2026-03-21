@@ -1,5 +1,5 @@
-# Use the stable ZMK build image (supports Zephyr 4.1)
-FROM docker.io/zmkfirmware/zmk-build-arm:stable
+# Same image as ZMK upstream .github/workflows/build.yml (Zephyr 4.1 toolchain)
+FROM docker.io/zmkfirmware/zmk-build-arm:4.1
 
 # Set working directory
 WORKDIR /workspaces

@@ -215,7 +215,7 @@ ZMK_SUBSCRIPTION(battery_image_update, zmk_usb_conn_state_changed);
 
 // BT/Endpoint update handler
 static int endpoint_update_handler(const zmk_event_t *eh) {
-    struct zmk_endpoint_instance endpoint = zmk_endpoints_selected();
+    struct zmk_endpoint_instance endpoint = zmk_endpoint_get_selected();
     bool connected = false;
     
     if (endpoint.transport == ZMK_TRANSPORT_BLE) {
@@ -252,7 +252,7 @@ static void delayed_initial_update_work(struct k_work *work) {
 #endif
     update_battery_image(level, usb_present);
     
-    struct zmk_endpoint_instance endpoint = zmk_endpoints_selected();
+    struct zmk_endpoint_instance endpoint = zmk_endpoint_get_selected();
     bool connected = false;
     if (endpoint.transport == ZMK_TRANSPORT_BLE) {
         connected = zmk_ble_active_profile_is_connected();
@@ -307,7 +307,7 @@ lv_obj_t *zmk_display_status_screen() {
 #endif
         update_battery_image(level, usb_present);
 
-        struct zmk_endpoint_instance endpoint = zmk_endpoints_selected();
+        struct zmk_endpoint_instance endpoint = zmk_endpoint_get_selected();
         bool connected = false;
         if (endpoint.transport == ZMK_TRANSPORT_BLE) {
             connected = zmk_ble_active_profile_is_connected();

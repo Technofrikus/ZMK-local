@@ -5,6 +5,7 @@ cmake:
   board:
     name: nice_nano
     path:
+     - /workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano
      - /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano
     qualifiers: nrf52840
     revision: 2.0.0
@@ -16,10 +17,8 @@ cmake:
     extra-user-files:
      - /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne.keymap
     files:
-     - /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano.dts
-     - /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano_2_0_0.overlay
+     - /workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/nice_nano.dts
      - /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne_left.overlay
-     - /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/boards/nice_nano.overlay
      - /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne.keymap
     include-dirs:
      - /workspaces/ZMK-tf2/modules/hal/stm32/dts
@@ -46,7 +45,7 @@ cmake:
      - /workspaces/ZMK-tf2/zephyr/dts
   kconfig:
     files:
-     - /workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano_2_0_0_defconfig
+     - /workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/nice_nano_2_0_0_defconfig
      - /workspaces/ZMK-tf2/zmk/app/prj.conf
      - /workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne_left.conf
     user-files:
@@ -62,6 +61,6 @@ cmake:
     zephyr-base: /workspaces/ZMK-tf2/zephyr
 version: 0.1.0
 west:
-  command: /usr/local/bin/west build -d build-test -s zmk/app -b nicekeyboards/nice_nano -- -DSHIELD=corne_left
+  command: /usr/local/bin/west build -d build-test -s zmk/app -p -b nice_nano -- -DSHIELD=corne_left
   topdir: /workspaces/ZMK-tf2
   version: 1.5.0

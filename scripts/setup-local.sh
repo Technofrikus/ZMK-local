@@ -122,10 +122,10 @@ else
     echo "West workspace already initialized"
 fi
 
-# Update west modules
+# Update west modules (same fetch options as upstream ZMK CI)
 echo "Updating west modules (this may take a while)..."
 cd "$REPO_ROOT"
-west update
+west update --fetch-opt=--filter=tree:0
 
 # Export Zephyr CMake package
 echo "Exporting Zephyr CMake package..."

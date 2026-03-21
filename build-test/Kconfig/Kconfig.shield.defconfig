@@ -1,1 +1,2 @@
+osource "/workspaces/ZMK-tf2/zmk/app/module/boards/shields/*/Kconfig.defconfig"
 osource "/workspaces/ZMK-tf2/zmk/app/boards/shields/*/Kconfig.defconfig"

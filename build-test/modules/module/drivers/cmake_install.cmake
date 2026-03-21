@@ -41,7 +41,6 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/workspaces/ZMK-tf2/build-test/modules/module/drivers/gpio/cmake_install.cmake")
   include("/workspaces/ZMK-tf2/build-test/modules/module/drivers/kscan/cmake_install.cmake")
-  include("/workspaces/ZMK-tf2/build-test/modules/module/drivers/sensor/cmake_install.cmake")
 
 endif()
 

@@ -59,9 +59,6 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/workspaces/ZMK-tf2/build-test/zephyr/subsys/testsuite/cmake_install.cmake")
   include("/workspaces/ZMK-tf2/build-test/zephyr/subsys/tracing/cmake_install.cmake")
   include("/workspaces/ZMK-tf2/build-test/zephyr/subsys/usb/cmake_install.cmake")
-  include("/workspaces/ZMK-tf2/build-test/zephyr/subsys/bluetooth/cmake_install.cmake")
-  include("/workspaces/ZMK-tf2/build-test/zephyr/subsys/retention/cmake_install.cmake")
-  include("/workspaces/ZMK-tf2/build-test/zephyr/subsys/settings/cmake_install.cmake")
 
 endif()
 

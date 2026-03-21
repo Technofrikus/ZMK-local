@@ -1,7 +1,7 @@
 # 0 "/workspaces/ZMK-tf2/zephyr/misc/empty_file.c"
 # 0 "<built-in>"
 # 0 "<command-line>"
-# 1 "/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano.dts" 1
+# 1 "/workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/nice_nano.dts" 1
 
 
 
@@ -742,39 +742,8 @@
         "nordic,nrf52", "simple-bus";
  };
 };
-# 10 "/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano.dts" 2
-# 1 "/workspaces/ZMK-tf2/zmk/app/dts/common/nordic/nrf52840_uf2_boot_mode.dtsi" 1 3 4
-
-&gpregret1 {
-    adafruit_boot_retention: retention@0 {
-        compatible = "zephyr,retention";
-        status = "okay";
-        reg = <0x0 0x1>;
-    };
-};
-
-/ {
-    chosen {
-        zephyr,boot-mode = &boot_retention;
-        zmk,magic-boot-mode = &adafruit_boot_retention;
-    };
-
-    magic_mapper {
-        compatible = "zmk,bootmode-to-magic-mapper";
-        status = "okay";
-
-        #address-cells = <1>;
-        #size-cells = <1>;
-
-        boot_retention: retention@0 {
-            compatible = "zephyr,retention";
-            status = "okay";
-            reg = <0x0 0x1>;
-        };
-    };
-};
-# 11 "/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano.dts" 2
-# 1 "/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano-pinctrl.dtsi" 1
+# 10 "/workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/nice_nano.dts" 2
+# 1 "/workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/nice_nano-pinctrl.dtsi" 1
 
 
 
@@ -831,8 +800,8 @@
         };
     };
 };
-# 12 "/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano.dts" 2
-# 1 "/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/arduino_pro_micro_pins.dtsi" 1
+# 11 "/workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/nice_nano.dts" 2
+# 1 "/workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/arduino_pro_micro_pins.dtsi" 1
 
 
 
@@ -890,7 +859,7 @@ pro_micro_d: &pro_micro {};
 pro_micro_i2c: &i2c0 {};
 pro_micro_spi: &spi1 {};
 pro_micro_serial: &uart0 {};
-# 13 "/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano.dts" 2
+# 12 "/workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/nice_nano.dts" 2
 
 
 / {
@@ -974,7 +943,7 @@ zephyr_udc0: &usbd {
         code_partition: partition@26000 {
             reg = <0x00026000 0x000c6000>;
         };
-# 106 "/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano.dts"
+# 105 "/workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano/nice_nano.dts"
         storage_partition: partition@ec000 {
             reg = <0x000ec000 0x00008000>;
         };
@@ -983,34 +952,6 @@ zephyr_udc0: &usbd {
             reg = <0x000f4000 0x0000c000>;
         };
     };
-};
-# 0 "<command-line>" 2
-# 1 "/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano/nice_nano_2_0_0.overlay" 1
-
-
-
-
-
-
-/ {
-    chosen {
-        zmk,battery = &vbatt;
-    };
-
-
-    EXT_POWER {
-        compatible = "zmk,ext-power-generic";
-        control-gpios = <&gpio0 13 (0 << 0)>;
-        init-delay-ms = <50>;
-    };
-
-    vbatt: vbatt {
-        compatible = "zmk,battery-nrf-vddh";
-    };
-};
-
-&reg0 {
-    status = "okay";
 };
 # 0 "<command-line>" 2
 # 1 "/workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne_left.overlay" 1
@@ -1297,55 +1238,6 @@ zephyr_udc0: &usbd {
         , <&pro_micro 15 (0 << 0)>
         , <&pro_micro 14 (0 << 0)>
         ;
-};
-# 0 "<command-line>" 2
-# 1 "/workspaces/ZMK-tf2/zmk/app/boards/shields/corne/boards/nice_nano.overlay" 1
-# 1 "/workspaces/ZMK-tf2/zephyr/include/zephyr/dt-bindings/led/led.h" 1 3 4
-# 2 "/workspaces/ZMK-tf2/zmk/app/boards/shields/corne/boards/nice_nano.overlay" 2
-
-&pinctrl {
-    spi3_default: spi3_default {
-        group1 {
-            psels = <((((((0) * 32U) + (6)) & 0x1FFU) << 0U) | ((5U & 0xFFU) << 24U))>;
-        };
-    };
-
-    spi3_sleep: spi3_sleep {
-        group1 {
-            psels = <((((((0) * 32U) + (6)) & 0x1FFU) << 0U) | ((5U & 0xFFU) << 24U))>;
-            low-power-enable;
-        };
-    };
-};
-
-&spi3 {
-    compatible = "nordic,nrf-spim";
-    status = "okay";
-
-    pinctrl-0 = <&spi3_default>;
-    pinctrl-1 = <&spi3_sleep>;
-    pinctrl-names = "default", "sleep";
-
-    led_strip: ws2812@0 {
-        compatible = "worldsemi,ws2812-spi";
-
-
-        reg = <0>;
-        spi-max-frequency = <4000000>;
-
-
-        chain-length = <10>;
-        spi-one-frame = <0x70>;
-        spi-zero-frame = <0x40>;
-
-        color-mapping = <2 1 3>;
-    };
-};
-
-/ {
-    chosen {
-        zmk,underglow = &led_strip;
-    };
 };
 # 0 "<command-line>" 2
 # 1 "/workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne.keymap" 1
@@ -2042,6 +1934,36 @@ zephyr_udc0: &usbd {
 };
 # 10 "/workspaces/ZMK-tf2/zmk/app/dts/behaviors/mouse_keys.dtsi" 2 3 4
 # 31 "/workspaces/ZMK-tf2/zmk/app/dts/behaviors.dtsi" 2 3 4
+# 1 "/workspaces/ZMK-tf2/zmk/app/dts/behaviors/display_debug.dtsi" 1 3 4
+
+
+
+
+
+
+/ {
+    behaviors {
+        display_debug_refresh: display_debug_refresh {
+            compatible = "zmk,behavior-display-debug";
+            #binding-cells = <0>;
+            action = <0>;
+            display-name = "Display Debug Refresh";
+        };
+        display_debug_blanking_off: display_debug_blanking_off {
+            compatible = "zmk,behavior-display-debug";
+            #binding-cells = <0>;
+            action = <1>;
+            display-name = "Display Debug Blanking Off";
+        };
+        display_debug_status: display_debug_status {
+            compatible = "zmk,behavior-display-debug";
+            #binding-cells = <0>;
+            action = <2>;
+            display-name = "Display Debug Status";
+        };
+    };
+};
+# 32 "/workspaces/ZMK-tf2/zmk/app/dts/behaviors.dtsi" 2 3 4
 # 8 "/workspaces/ZMK-tf2/zmk/app/boards/shields/corne/corne.keymap" 2
 
 # 1 "/workspaces/ZMK-tf2/zmk/app/include/dt-bindings/zmk/bt.h" 1 3 4

@@ -27,7 +27,7 @@ APPLICATION_SOURCE_DIR:PATH=/workspaces/ZMK-tf2/zmk/app
 BOARD:STRING=nice_nano
 
 //Main board directory for board (nice_nano)
-BOARD_DIR:PATH=/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano
+BOARD_DIR:PATH=/workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano
 
 //Support board extensions
 BOARD_EXTENSIONS:BOOL=ON
@@ -444,7 +444,7 @@ zmk_SOURCE_DIR:STATIC=/workspaces/ZMK-tf2/zmk/app
 ########################
 
 //List of board directories for board (nice_nano)
-BOARD_DIRECTORIES:INTERNAL=/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano
+BOARD_DIRECTORIES:INTERNAL=/workspaces/ZMK-tf2/zmk/app/module/boards/nicekeyboards/nice_nano;/workspaces/ZMK-tf2/zmk/app/boards/nicekeyboards/nice_nano
 //DT bindings root directories
 CACHED_DTS_ROOT_BINDINGS:INTERNAL=/workspaces/ZMK-tf2/zmk/app/module/dts/bindings;/workspaces/ZMK-tf2/zmk/app/dts/bindings;/workspaces/ZMK-tf2/zephyr/dts/bindings
 //ADVANCED property for variable: CMAKE_ADDR2LINE
@@ -558,7 +558,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=202
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=146
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -630,8 +630,6 @@ _Python3_EXECUTABLE:INTERNAL=/usr/bin/python3
 //Python3 Properties
 _Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;12;3;64;<none>;cpython-312-aarch64-linux-gnu.so;abi3;/usr/lib/python3.12;/usr/lib/python3.12;/usr/local/lib/python3.12/dist-packages;/usr/local/lib/python3.12/dist-packages
 _Python3_INTERPRETER_SIGNATURE:INTERNAL=bb1f7d862e7cc7765c27ce56f43851f0
-//Interpreter reason failure
-_Python3_Interpreter_REASON_FAILURE:INTERNAL=
 //NumPy reason failure
 _Python3_NumPy_REASON_FAILURE:INTERNAL=
 //Test check_C__nostartfiles__nostdlib__isystem___opt_zephyr_sdk_0_16_9_arm_zephyr_eabi_bin____lib_gcc_arm_zephyr_eabi_12_2_0_include___isystem___opt_zephyr_sdk_0_16_9_arm_zephyr_eabi_bin____lib_gcc_arm_zephyr_eabi_12_2_0_include_fixed___Wl___unresolved_symbols_ignore_in_object_files__Wl___entry_0__fuse_ld_bfd
