@@ -7,43 +7,160 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/modifiers.h>
+
+#define BASE 0
+#define NUM 1
+#define SYM 2
+#define NAV 3
+
+&lt {
+	tapping-term-ms = <200>;
+};
 
 / {
-    keymap {
-        compatible = "zmk,keymap";
+	behaviors {
+		/* Tap: H — Hold: Gui+H (Apricot TD(0)) */
+		td0: tap_gui_h {
+			compatible = "zmk,behavior-hold-tap";
+			#binding-cells = <2>;
+			flavor = "tap-preferred";
+			tapping-term-ms = <200>;
+			bindings = <&kp>, <&kp>;
+		};
 
-        default_layer {
-            display-name = "Base";
-            bindings = <
-                &kp Q    &kp W    &kp E    &kp R    &kp T    &kp Y    &kp U    &kp I    &kp O    &kp P
-                &kp A    &kp S    &kp D    &kp F    &kp G    &kp H    &kp J    &kp K    &kp L    &kp SEMI
-                &kp Z    &kp X    &kp C    &kp V    &kp B    &kp N    &kp M    &kp COMMA &kp DOT  &kp SLASH
-                &kp LCTRL &kp LALT &kp LGUI &mo 1    &kp ENTER       &kp SPACE  &mo 2    &kp RALT &kp RCTRL
-            >;
+		/* Tap: play/pause — double: next — triple: prev (Apricot TD(1)) */
+		td1: tap_dance_media {
+			compatible = "zmk,behavior-tap-dance";
+			#binding-cells = <0>;
+			tapping-term-ms = <200>;
+			bindings = <&kp C_PP &kp C_NEXT &kp C_PREV>;
+		};
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
-        };
+		/* Allein: Q — mit Gui: Tab; keep-mods verhindert, dass Gui beim Morph „verschluckt“ wird (Cmd halten zum Weiterschalten). */
+		qq_gui_tab: qq_gui_tab {
+			compatible = "zmk,behavior-mod-morph";
+			#binding-cells = <0>;
+			mods = <(MOD_LGUI | MOD_RGUI)>;
+			keep-mods = <(MOD_LGUI | MOD_RGUI)>;
+			bindings = <&kp Q &kp TAB>;
+		};
+	};
 
-        lower_layer {
-            display-name = "Lower";
-            bindings = <
-                &kp N1   &kp N2   &kp N3   &kp N4   &kp N5   &kp N6   &kp N7   &kp N8   &kp N9   &kp N0
-                &kp TAB  &none    &none    &none    &none    &kp LEFT &kp DOWN &kp UP   &kp RIGHT &kp DEL
-                &kp LSHFT &none    &none    &none    &none    &none    &none    &none    &none    &kp RSHFT
-                &trans   &trans   &trans   &trans   &trans             &trans   &trans   &trans   &trans
-            >;
+	combos {
+		compatible = "zmk,combos";
 
-            sensor-bindings = <&inc_dec_kp PG_UP PG_DN>;
-        };
+		combo_jk_bspc {
+			timeout-ms = <50>;
+			key-positions = <16 17>;
+			layers = <BASE>;
+			bindings = <&kp BSPC>;
+		};
 
-        raise_layer {
-            display-name = "Raise";
-            bindings = <
-                &kp F1   &kp F2   &kp F3   &kp F4   &kp F5   &kp F6   &kp F7   &kp F8   &kp F9   &kp F10
-                &kp F11  &kp F12  &none    &none    &none    &bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3
-                &none    &none    &none    &none    &none    &studio_unlock &none    &none    &none    &none
-                &trans   &trans   &trans   &trans   &trans            &trans   &trans   &trans   &trans
-            >;
-        };
-    };
+		combo_jkl_alt_bspc {
+			timeout-ms = <50>;
+			key-positions = <16 17 18>;
+			layers = <BASE>;
+			bindings = <&kp LA(BSPC)>;
+		};
+
+		combo_op_bspc {
+			timeout-ms = <50>;
+			key-positions = <8 9>;
+			layers = <BASE>;
+			bindings = <&kp BSPC>;
+		};
+
+		combo_qw_tab {
+			timeout-ms = <50>;
+			key-positions = <0 1>;
+			layers = <BASE>;
+			bindings = <&kp TAB>;
+		};
+
+		combo_as_esc {
+			timeout-ms = <50>;
+			key-positions = <10 11>;
+			layers = <BASE>;
+			bindings = <&kp ESC>;
+		};
+
+		combo_qwe_gui_q {
+			timeout-ms = <50>;
+			key-positions = <0 1 2>;
+			layers = <BASE>;
+			bindings = <&kp LG(Q)>;
+		};
+
+		combo_kl_del {
+			timeout-ms = <50>;
+			key-positions = <17 18>;
+			layers = <BASE>;
+			bindings = <&kp DEL>;
+		};
+
+		/* Beide Daumen (&mo SYM Pos 33 + &lt NUM SPACE Pos 35) → td1 */
+		combo_thumb_td1 {
+			timeout-ms = <50>;
+			key-positions = <33 35>;
+			layers = <BASE>;
+			bindings = <&td1>;
+		};
+	};
+
+	keymap {
+		compatible = "zmk,keymap";
+
+		default_layer {
+			display-name = "Base";
+			bindings = <
+				/* Zeilen R0–R2: je 10 Spalten C0–C9. R3: 9 Tasten, unter C6 keine Taste (Tab-Lücke). */
+				/* R0 */      	&qq_gui_tab           	&kp W                 	&kp E                 	&kp R                 	&kp T                 	&kp Y                 	&kp U                 	&kp I                 	&kp O                 	&kp P                 
+				/* R1 */      	&kp A           		&kp S                 	&kp D                 	&kp F                 	&kp G                 	&td0 LG(H) H          	&kp J                 	&kp K                 	&kp L                 	&lt NAV ENTER      
+				/* R2 */      	&mt LSHFT Z           	&kp X                 	&kp C                 	&kp V                 	&kp B                 	&kp N                 	&kp M                 	&kp COMMA             	&kp UP                	&mt RSHFT DOT         
+				/* R3 */      	&kp LCTRL             	&kp LALT              	&kp LGUI              	&mo SYM             	&none                 	&lt NUM SPACE       		&kp LEFT              	&kp DOWN              	&kp RIGHT             
+			>;
+
+			sensor-bindings = <&inc_dec_kp LS(LA(C_VOL_DN)) LS(LA(C_VOL_UP))>;
+		};
+
+		num_layer {
+			display-name = "Numbers";
+			bindings = <
+				/* Zeilen R0–R2: je 10 Spalten C0–C9. R3: 9 Tasten, unter C6 keine Taste (Tab-Lücke). */
+				/* R0 */      	&none                 	&none                 	&none                 	&none                 	&none                 	&none                 	&kp RBKT              	&kp SLASH             	&kp RS(RBKT)          	&kp LS(N7)            
+				/* R1 */      	&kp N1                	&kp N2                	&kp N3                	&kp N4                	&kp N5                	&kp N6                	&kp N7                	&kp N8                	&kp N9                	&trans                
+				/* R2 */      	&trans                	&none                 	&none                 	&none                 	&none                 	&none                 	&kp LS(N0)            	&none                 	&none                 	&trans                
+				/* R3 */      	&trans                	&trans                	&trans                	&trans                	&trans                	&trans                		&trans                	&trans                	&trans                
+			>;
+
+			sensor-bindings = <&inc_dec_kp C_BRI_DN C_BRI_UP>;
+		};
+
+		sym_layer {
+			display-name = "Symbols";
+			bindings = <
+				/* Zeilen R0–R2: je 10 Spalten C0–C9. R3: 9 Tasten, unter C6 keine Taste (Tab-Lücke). */
+				/* R0 */      	&kp LS(GRAVE)         	&kp GRAVE             	&kp LA(N8)            	&kp LA(N9)            	&kp LS(N4)            	&kp LS(N2)            	&kp LBKT              	&kp LS(N6)            	&kp SEMI              	&kp LS(N3)            
+				/* R1 */      	&kp SQT               	&kp MINUS             	&kp NUHS              	&kp LS(N1)            	&kp SLASH             	&kp LS(N5)            	&kp LS(MINUS)         	&kp LS(N8)            	&kp LS(N9)            	&trans                
+				/* R2 */      	&trans                	&kp LS(NUBS)          	&kp LA(N5)            	&kp LA(N6)            	&kp LS(NUHS)          	&kp LS(EQUAL)         	&kp LS(SLASH)         	&kp LA(N7)            	&none                 	&trans                
+				/* R3 */      	&none                 	&trans                	&trans                	&none                 	&trans                	&trans                		&none                 	&trans                	&none                 
+			>;
+
+			sensor-bindings = <&inc_dec_kp PG_UP PG_DN>;
+		};
+
+		nav_layer {
+			display-name = "Navigation";
+			bindings = <
+				/* Zeilen R0–R2: je 10 Spalten C0–C9. R3: 9 Tasten, unter C6 keine Taste (Tab-Lücke). */
+				/* R0 */      	&studio_unlock        	&bt BT_CLR            	&bootloader           	&trans                	&trans                	&trans                	&kp LA(LEFT)          	&kp UP                	&kp LA(RIGHT)         	&trans                
+				/* R1 */      	&kp LCTRL             	&trans                	&trans                	&trans                	&trans                	&trans                	&kp LEFT              	&kp DOWN              	&kp RIGHT             	&trans                
+				/* R2 */      	&none                 	&none                 	&none                 	&none                 	&none                 	&none                 	&none                 	&none                 	&none                 	&none                 
+				/* R3 */      	&bt BT_SEL 0          	&bt BT_SEL 1          	&bt BT_SEL 2          	&trans                	&trans                	&trans                		&trans                	&trans                	&trans                
+			>;
+
+			sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+		};
+	};
 };
